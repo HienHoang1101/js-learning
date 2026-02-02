@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculator v2.0 - Functions Practice</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #b4b4b4 0%, #71748e 100%);
+        padding: 20px;
+      }
+
+      .calculator-container {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .calculator {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        width: 320px;
+      }
+
+      .history-panel {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        width: 280px;
+        max-height: 500px;
+        overflow-y: auto;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 28px;
+      }
+
+      h2 {
+        color: #2f23d6;
+        margin-bottom: 15px;
+        font-size: 20px;
+        border-bottom: 2px solid #2f23d6;
+        padding-bottom: 8px;
+      }
+
+      .display {
+        width: 100%;
+        padding: 20px;
+        margin: 10px 0;
+        font-size: 28px;
+        text-align: right;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        background: #f8f9fa;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .history-list {
+        list-style: none;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .history-item {
+        padding: 10px;
+        margin-bottom: 8px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        border-left: 4px solid #2f23d6;
+        font-family: monospace;
+        transition: transform 0.2s;
+      }
+
+      .history-item:hover {
+        transform: translateX(5px);
+        background: #e9ecef;
+      }
+
+      .history-item .expression {
+        color: #666;
+        font-size: 14px;
+      }
+
+      .history-item .result {
+        color: #28a745;
+        font-weight: bold;
+        font-size: 16px;
+        margin-top: 3px;
+      }
+
+      .buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      button {
+        padding: 18px 10px;
+        font-size: 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background: #131224;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      button:hover {
+        background: #56515b;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      button.operator {
+        background: #3d3990;
+      }
+
+      button.operator:hover {
+        background: #786596;
+      }
+
+      button.equals {
+        background: #4facfe;
+        grid-column: span 2;
+      }
+
+      button.equals:hover {
+        background: #3d9be9;
+      }
+
+      button.clear {
+        background: #ff758c;
+      }
+
+      button.clear:hover {
+        background: #ff5269;
+      }
+
+      button.memory {
+        background: #ffcc80;
+      }
+
+      button.memory:hover {
+        background: #ffb74d;
+      }
+
+      .memory-display {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 14px;
+        text-align: right;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: #e3f2fd;
+        color: #1976d2;
+        display: none;
+      }
+
+      .clear-all {
+        grid-column: span 2;
+        background: #a0aec0;
+      }
+
+      .clear-all:hover {
+        background: #718096;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="calculator-container">
+      <div class="calculator">
+        <h1>🧮 Calculator v2.0</h1>
+        <div class="memory-display" id="memoryDisplay">M: 0</div>
+        <input
+          type="text"
+          id="display"
+          class="display"
+          disabled
+          placeholder="0"
+        />
+        <div class="buttons">
+          <button class="clear" onclick="calculator.clearEntry()">CE</button>
+          <button class="clear-all" onclick="calculator.clearAll()">AC</button>
+          <button class="operator" onclick="calculator.backspace()">⌫</button>
+          <button class="operator" onclick="calculator.appendOperator('/')">
+            /
+          </button>
+
+          <button onclick="calculator.appendNumber('7')">7</button>
+          <button onclick="calculator.appendNumber('8')">8</button>
+          <button onclick="calculator.appendNumber('9')">9</button>
+          <button class="operator" onclick="calculator.appendOperator('*')">
+            ×
+          </button>
+
+          <button onclick="calculator.appendNumber('4')">4</button>
+          <button onclick="calculator.appendNumber('5')">5</button>
+          <button onclick="calculator.appendNumber('6')">6</button>
+          <button class="operator" onclick="calculator.appendOperator('-')">
+            -
+          </button>
+
+          <button onclick="calculator.appendNumber('1')">1</button>
+          <button onclick="calculator.appendNumber('2')">2</button>
+          <button onclick="calculator.appendNumber('3')">3</button>
+          <button class="operator" onclick="calculator.appendOperator('+')">
+            +
+          </button>
+
+          <button onclick="calculator.appendNumber('0')">0</button>
+          <button onclick="calculator.appendNumber('.')">.</button>
+          <button class="memory" onclick="calculator.memoryStore()">M+</button>
+          <button class="memory" onclick="calculator.memoryRecall()">MR</button>
+
+          <button class="equals" onclick="calculator.calculate()">=</button>
+          <button class="memory" onclick="calculator.memoryClear()">MC</button>
+        </div>
+      </div>
+
+      <div class="history-panel">
+        <h2>📝 History</h2>
+        <ul id="historyList" class="history-list">
+          <!-- History items sẽ được thêm vào đây -->
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      // Calculator Object - Sử dụng Object để tổ chức code
+      const calculator = {
+        displayValue: "0",
+        firstOperand: null,
+        waitingForSecondOperand: false,
+        operator: null,
+        history: [],
+        memory: 0,
+
+        // Hiển thị giá trị lên màn hình
+        updateDisplay() {
+          document.getElementById("display").value = this.displayValue;
+        },
+
+        // Thêm số vào display
+        appendNumber(number) {
+          if (this.waitingForSecondOperand) {
+            this.displayValue = number;
+            this.waitingForSecondOperand = false;
+          } else {
+            this.displayValue =
+              this.displayValue === "0" ? number : this.displayValue + number;
+          }
+          this.updateDisplay();
+        },
+
+        // Thêm toán tử
+        appendOperator(nextOperator) {
+          const inputValue = parseFloat(this.displayValue);
+
+          if (this.firstOperand === null) {
+            this.firstOperand = inputValue;
+          } else if (this.operator) {
+            const result = this.calculate(false);
+            this.displayValue = String(result);
+            this.updateDisplay();
+            this.firstOperand = result;
+          }
+
+          this.waitingForSecondOperand = true;
+          this.operator = nextOperator;
+        },
+
+        // Tính toán kết quả
+        calculate(addToHistory = true) {
+          if (this.operator === null || this.waitingForSecondOperand) {
+            return parseFloat(this.displayValue);
+          }
+
+          const secondOperand = parseFloat(this.displayValue);
+          let result = 0;
+
+          switch (this.operator) {
+            case "+":
+              result = this.firstOperand + secondOperand;
+              break;
+            case "-":
+              result = this.firstOperand - secondOperand;
+              break;
+            case "*":
+              result = this.firstOperand * secondOperand;
+              break;
+            case "/":
+              result = this.firstOperand / secondOperand;
+              break;
+            default:
+              return;
+          }
+
+          // Làm tròn số thập phân
+          result = Math.round(result * 1000000) / 1000000;
+
+          if (addToHistory) {
+            const expression = `${this.firstOperand} ${this.operator} ${secondOperand}`;
+            this.addToHistory(expression, result);
+          }
+
+          this.displayValue = String(result);
+          this.updateDisplay();
+
+          // Reset state
+          this.firstOperand = result;
+          this.waitingForSecondOperand = true;
+          this.operator = null;
+
+          return result;
+        },
+
+        // Xóa entry hiện tại
+        clearEntry() {
+          this.displayValue = "0";
+          this.updateDisplay();
+        },
+
+        // Xóa tất cả
+        clearAll() {
+          this.displayValue = "0";
+          this.firstOperand = null;
+          this.waitingForSecondOperand = false;
+          this.operator = null;
+          this.updateDisplay();
+        },
+
+        // Xóa ký tự cuối
+        backspace() {
+          if (this.displayValue.length > 1) {
+            this.displayValue = this.displayValue.slice(0, -1);
+          } else {
+            this.displayValue = "0";
+          }
+          this.updateDisplay();
+        },
+
+        // Thêm vào history
+        addToHistory(expression, result) {
+          this.history.unshift({ expression, result });
+          if (this.history.length > 20) {
+            this.history.pop();
+          }
+          this.renderHistory();
+        },
+
+        // Hiển thị history
+        renderHistory() {
+          const historyList = document.getElementById("historyList");
+          historyList.innerHTML = this.history
+            .map(
+              (item) => `
+                    <li class="history-item">
+                        <div class="expression">${item.expression}</div>
+                        <div class="result">= ${item.result}</div>
+                    </li>
+                `,
+            )
+            .join("");
+        },
+
+        // Memory Store
+        memoryStore() {
+          this.memory = parseFloat(this.displayValue);
+          this.updateMemoryDisplay();
+        },
+
+        // Memory Recall
+        memoryRecall() {
+          this.displayValue = String(this.memory);
+          this.updateDisplay();
+        },
+
+        // Memory Clear
+        memoryClear() {
+          this.memory = 0;
+          this.updateMemoryDisplay();
+        },
+
+        // Cập nhật memory display
+        updateMemoryDisplay() {
+          const memoryDisplay = document.querySelector(".memory-display");
+          memoryDisplay.style.display = this.memory !== 0 ? "block" : "none";
+          memoryDisplay.textContent = `M: ${this.memory}`;
+        },
+      };
+
+      // Khởi tạo
+      calculator.updateDisplay();
+    </script>
+  </body>
+</html>
