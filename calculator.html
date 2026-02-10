@@ -1,475 +1,450 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Calculator v2.0 - Functions Practice</title>
+    <title>📝 Todo List App - Có Giải Thích Chi Tiết</title>
     <style>
-      /* Reset CSS - Xóa mọi margin, padding mặc định của trình duyệt */
+      /* --- PHẦN 1: CSS (TRANG TRÍ GIAO DIỆN) --- */
+
+      /* Reset mặc định của trình duyệt */
       *,
       *::before,
       *::after {
         margin: 0;
         padding: 0;
-        box-sizing: border-box; /* Padding và border tính TRONG width */
+        box-sizing: border-box;
       }
 
+      /* Trang trí body: Màu nền gradient tím xanh */
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        display: flex; /* Flexbox để căn giữa */
-        justify-content: center; /* Căn giữa theo chiều ngang */
-        align-items: center; /* Căn giữa theo chiều dọc */
-        min-height: 100vh; /* Chiều cao tối thiểu = 100% viewport */
-        background: linear-gradient(135deg, #b4b4b4 0%, #71748e 100%);
-        padding: 20px;
-      }
-
-      /* Container chứa cả calculator và history panel */
-      .calculator-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
         display: flex;
-        gap: 20px; /* Khoảng cách giữa 2 panels */
-        flex-wrap: wrap; /* Xuống hàng nếu màn hình nhỏ */
         justify-content: center;
-      }
-
-      /* Khung máy tính */
-      .calculator {
-        background: white;
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3); /* Đổ bóng */
-        width: 320px;
-      }
-
-      /* Khung lịch sử bên phải */
-      .history-panel {
-        background: white;
+        align-items: center;
         padding: 20px;
+      }
+
+      /* Hộp chứa chính (Container) */
+      .container {
+        width: 100%;
+        max-width: 600px;
+        background: white;
         border-radius: 15px;
-        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
-        width: 280px;
-        max-height: 500px; /* Chiều cao tối đa */
-        overflow-y: auto; /* Scroll khi quá cao */
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        padding: 40px;
       }
 
       h1 {
         text-align: center;
         color: #333;
-        margin-bottom: 20px;
-        font-size: 28px;
+        margin-bottom: 30px;
+        font-size: 32px;
+        font-weight: 700;
       }
 
-      h2 {
-        color: #2f23d6;
-        margin-bottom: 15px;
-        font-size: 20px;
-        border-bottom: 2px solid #2f23d6; /* Gạch chân */
-        padding-bottom: 8px;
+      /* Khu vực nhập liệu */
+      .input-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 30px;
       }
 
-      /* Màn hình hiển thị kết quả */
-      .display {
-        width: 100%;
-        padding: 20px;
-        margin: 10px 0;
-        font-size: 28px;
-        text-align: right; /* Căn phải như máy tính thật */
+      #todoInput {
+        flex: 1;
+        padding: 15px 20px;
         border: 2px solid #ddd;
         border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+      }
+
+      #todoInput:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      #addButton {
+        padding: 15px 30px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        white-space: nowrap;
+      }
+
+      #addButton:hover {
+        background: #764ba2;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      /* Các nút lọc (All, Active, Completed) */
+      .filters {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        justify-content: center;
+      }
+
+      .filter-btn {
+        padding: 8px 16px;
         background: #f8f9fa;
-        color: #333;
-        font-weight: bold;
+        border: 2px solid #ddd;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.3s;
       }
 
-      /* Danh sách lịch sử */
-      .history-list {
-        list-style: none; /* Bỏ dấu chấm đầu dòng */
-        max-height: 400px;
-        overflow-y: auto; /* Scroll nếu quá nhiều */
-      }
-
-      /* Mỗi item trong lịch sử */
-      .history-item {
-        padding: 10px;
-        margin-bottom: 8px;
-        background: #f8f9fa;
-        border-radius: 5px;
-        border-left: 4px solid #2f23d6; /* Viền trái để nhấn mạnh */
-        font-family: monospace; /* Font code để dễ đọc */
-        transition: transform 0.2s; /* Hiệu ứng chuyển động mượt */
-      }
-
-      /* Hiệu ứng khi hover vào history item */
-      .history-item:hover {
-        transform: translateX(5px); /* Dịch sang phải 5px */
+      .filter-btn:hover {
         background: #e9ecef;
       }
 
-      .history-item .expression {
-        color: #666;
-        font-size: 14px;
-      }
-
-      .history-item .result {
-        color: #28a745; /* Màu xanh lá cho kết quả */
-        font-weight: bold;
-        font-size: 16px;
-        margin-top: 3px;
-      }
-
-      /* Grid layout cho các nút bấm */
-      .buttons {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr); /* 4 cột bằng nhau */
-        gap: 10px; /* Khoảng cách giữa các nút */
-        margin-top: 15px;
-      }
-
-      /* Style chung cho tất cả buttons */
-      button {
-        padding: 18px 10px;
-        font-size: 18px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer; /* Con trỏ chuột dạng bàn tay */
-        background: #131224;
+      .filter-btn.active {
+        background: #667eea;
         color: white;
-        font-weight: 600;
-        transition: all 0.3s; /* Hiệu ứng mượt cho mọi thay đổi */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        border-color: #667eea;
       }
 
-      /* Hiệu ứng khi hover */
-      button:hover {
-        background: #56515b;
-        transform: translateY(-2px); /* Nổi lên 2px */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Bóng đậm hơn */
+      /* Danh sách công việc */
+      .todo-list {
+        list-style: none;
+        margin-top: 20px;
       }
 
-      /* Hiệu ứng khi click */
-      button:active {
-        transform: translateY(0); /* Trở về vị trí ban đầu */
+      .todo-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        margin-bottom: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        transition: all 0.3s;
+        border-left: 4px solid #667eea; /* Thanh màu bên trái */
       }
 
-      /* Các nút toán tử (+, -, *, /) */
-      button.operator {
-        background: #3d3990;
+      .todo-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
 
-      button.operator:hover {
-        background: #786596;
+      /* Style cho công việc đã hoàn thành */
+      .todo-item.completed {
+        background: #e8f5e9;
+        border-left-color: #4caf50;
+        text-decoration: line-through;
+        color: #888;
       }
 
-      /* Nút bằng (=) */
-      button.equals {
-        background: #4facfe;
-        grid-column: span 2; /* Chiếm 2 cột */
+      .todo-checkbox {
+        margin-right: 15px;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: #4caf50;
       }
 
-      button.equals:hover {
-        background: #3d9be9;
+      .todo-text {
+        flex: 1;
+        font-size: 16px;
+        color: #333;
       }
 
-      /* Nút xóa (CE, AC) */
-      button.clear {
-        background: #ff758c;
+      /* Nút sửa và xóa */
+      .todo-actions {
+        display: flex;
+        gap: 8px;
       }
 
-      button.clear:hover {
-        background: #ff5269;
-      }
-
-      /* Nút bộ nhớ (M+, MR, MC) */
-      button.memory {
-        background: #ffcc80;
-      }
-
-      button.memory:hover {
-        background: #ffb74d;
-      }
-
-      /* Hiển thị bộ nhớ */
-      .memory-display {
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-        font-size: 14px;
-        text-align: right;
-        border: 1px solid #ddd;
+      .todo-btn {
+        padding: 8px 12px;
+        border: none;
         border-radius: 5px;
-        background: #e3f2fd;
-        color: #1976d2;
-        display: none; /* Ẩn mặc định, chỉ hiện khi có memory */
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s;
       }
 
-      /* Nút AC (All Clear) */
-      .clear-all {
-        grid-column: span 2; /* Chiếm 2 cột */
-        background: #a0aec0;
+      .edit-btn {
+        background: #2196f3;
+        color: white;
+      }
+      .edit-btn:hover {
+        background: #0b7dda;
       }
 
-      .clear-all:hover {
-        background: #718096;
+      .delete-btn {
+        background: #f44336;
+        color: white;
+      }
+      .delete-btn:hover {
+        background: #e53935;
+      }
+
+      /* Thống kê (Stats) */
+      .stats {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 25px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #666;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #999;
+        font-size: 18px;
+      }
+
+      /* Responsive cho điện thoại */
+      @media (max-width: 600px) {
+        .container {
+          padding: 20px;
+        }
+        .input-group {
+          flex-direction: column;
+        }
+        #addButton {
+          width: 100%;
+        }
+        .filters {
+          flex-wrap: wrap;
+        }
+        .filter-btn {
+          flex: 1;
+          min-width: 100px;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="calculator-container">
-      <div class="calculator">
-        <h1>🧮 Calculator v2.0</h1>
-        <!-- Hiển thị giá trị memory (M: 0) -->
-        <div class="memory-display" id="memoryDisplay">M: 0</div>
-        <!-- Màn hình hiển thị kết quả -->
+    <div class="container">
+      <h1>📝 Danh Sách Việc Cần Làm</h1>
+
+      <div class="input-group">
         <input
           type="text"
-          id="display"
-          class="display"
-          disabled
-          placeholder="0"
+          id="todoInput"
+          placeholder="Bạn định làm gì hôm nay?"
+          autocomplete="off"
         />
-        <div class="buttons">
-          <!-- CE: Clear Entry - Xóa số hiện tại -->
-          <button class="clear" onclick="calculator.clearEntry()">CE</button>
-          <!-- AC: All Clear - Xóa tất cả -->
-          <button class="clear-all" onclick="calculator.clearAll()">AC</button>
-          <!-- Backspace: Xóa ký tự cuối -->
-          <button class="operator" onclick="calculator.backspace()">⌫</button>
-          <button class="operator" onclick="calculator.appendOperator('/')">
-            /
-          </button>
-
-          <button onclick="calculator.appendNumber('7')">7</button>
-          <button onclick="calculator.appendNumber('8')">8</button>
-          <button onclick="calculator.appendNumber('9')">9</button>
-          <button class="operator" onclick="calculator.appendOperator('*')">
-            ×
-          </button>
-
-          <button onclick="calculator.appendNumber('4')">4</button>
-          <button onclick="calculator.appendNumber('5')">5</button>
-          <button onclick="calculator.appendNumber('6')">6</button>
-          <button class="operator" onclick="calculator.appendOperator('-')">
-            -
-          </button>
-
-          <button onclick="calculator.appendNumber('1')">1</button>
-          <button onclick="calculator.appendNumber('2')">2</button>
-          <button onclick="calculator.appendNumber('3')">3</button>
-          <button class="operator" onclick="calculator.appendOperator('+')">
-            +
-          </button>
-
-          <button onclick="calculator.appendNumber('0')">0</button>
-          <button onclick="calculator.appendNumber('.')">.</button>
-          <!-- M+: Memory Add - Lưu vào bộ nhớ -->
-          <button class="memory" onclick="calculator.memoryStore()">M+</button>
-          <!-- MR: Memory Recall - Lấy từ bộ nhớ -->
-          <button class="memory" onclick="calculator.memoryRecall()">MR</button>
-
-          <button class="equals" onclick="calculator.calculate()">=</button>
-          <!-- MC: Memory Clear - Xóa bộ nhớ -->
-          <button class="memory" onclick="calculator.memoryClear()">MC</button>
-        </div>
+        <button id="addButton">Thêm</button>
       </div>
 
-      <!-- Panel lịch sử bên phải -->
-      <div class="history-panel">
-        <h2>📝 History</h2>
-        <ul id="historyList" class="history-list">
-          <!-- History items sẽ được JavaScript thêm vào đây -->
-        </ul>
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">Tất cả</button>
+        <button class="filter-btn" data-filter="active">Đang làm</button>
+        <button class="filter-btn" data-filter="completed">Đã xong</button>
+      </div>
+
+      <ul id="todoList" class="todo-list"></ul>
+
+      <div class="stats">
+        <span id="totalCount">Tổng: 0</span>
+        <span id="completedCount">Đã xong: 0</span>
+        <span id="activeCount">Đang làm: 0</span>
       </div>
     </div>
 
     <script>
-      // OBJECT CALCULATOR - Tổ chức tất cả logic vào 1 object
-      const calculator = {
-        // PROPERTIES - Các thuộc tính lưu trạng thái
-        displayValue: "0", // Giá trị hiển thị trên màn hình
-        firstOperand: null, // Số thứ nhất trong phép tính
-        waitingForSecondOperand: false, // Đang chờ nhập số thứ 2?
-        operator: null, // Toán tử hiện tại (+, -, *, /)
-        history: [], // Mảng lưu lịch sử tính toán
-        memory: 0, // Bộ nhớ calculator
+      // Class TodoApp: Quản lý toàn bộ ứng dụng
+      class TodoApp {
+        // 1. CONSTRUCTOR: Khởi tạo dữ liệu ban đầu
+        constructor() {
+          this.todos = []; // Mảng chứa các công việc
+          this.currentFilter = "all"; // Mặc định hiển thị tất cả
+          this.init(); // Chạy ứng dụng
+        }
 
-        // METHOD: Cập nhật màn hình hiển thị
-        updateDisplay() {
-          document.getElementById("display").value = this.displayValue;
-        },
+        // 2. INIT: Hàm thiết lập
+        init() {
+          this.loadTodos(); // Lấy dữ liệu cũ từ bộ nhớ
+          this.render(); // Vẽ giao diện
+          this.setupEventListeners(); // Bắt sự kiện click chuột/bàn phím
+        }
 
-        // METHOD: Thêm số vào display
-        appendNumber(number) {
-          // Nếu đang chờ số thứ 2, thay thế toàn bộ display
-          if (this.waitingForSecondOperand) {
-            this.displayValue = number;
-            this.waitingForSecondOperand = false;
-          } else {
-            // Nếu display là "0", thay thế bằng số mới
-            // Nếu không, nối thêm số vào cuối
-            this.displayValue =
-              this.displayValue === "0" ? number : this.displayValue + number;
+        // 3. LISTENERS: Lắng nghe hành động người dùng
+        setupEventListeners() {
+          // Sự kiện click nút Thêm
+          document
+            .getElementById("addButton")
+            .addEventListener("click", () => this.addTodo());
+
+          // Sự kiện nhấn Enter trong ô nhập liệu
+          document
+            .getElementById("todoInput")
+            .addEventListener("keypress", (e) => {
+              if (e.key === "Enter") this.addTodo();
+            });
+
+          // Sự kiện click các nút lọc (Filter)
+          document.querySelectorAll(".filter-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              this.setFilter(e.target.dataset.filter);
+            });
+          });
+        }
+
+        // 4. ADD TODO: Thêm công việc mới
+        addTodo() {
+          const input = document.getElementById("todoInput");
+          const text = input.value.trim(); // Lấy chữ và xóa khoảng trắng thừa
+
+          if (text === "") return; // Nếu rỗng thì dừng lại
+
+          // Tạo object công việc mới
+          const newTodo = {
+            id: Date.now(), // ID duy nhất dựa trên thời gian
+            text: text, // Nội dung
+            completed: false, // Mặc định là chưa xong
+            createdAt: new Date(),
+          };
+
+          this.todos.push(newTodo); // Thêm vào mảng
+          this.saveTodos(); // Lưu vào bộ nhớ
+          input.value = ""; // Xóa ô nhập liệu
+          this.render(); // Vẽ lại giao diện
+        }
+
+        // 5. DELETE TODO: Xóa công việc
+        deleteTodo(id) {
+          // Giữ lại những việc có ID khác với ID cần xóa
+          this.todos = this.todos.filter((todo) => todo.id !== id);
+          this.saveTodos();
+          this.render();
+        }
+
+        // 6. TOGGLE: Đổi trạng thái (Xong/Chưa xong)
+        toggleCompleted(id) {
+          const todo = this.todos.find((t) => t.id === id);
+          if (todo) {
+            todo.completed = !todo.completed; // Đảo ngược true/false
+            this.saveTodos();
+            this.render();
           }
-          this.updateDisplay();
-        },
+        }
 
-        // METHOD: Thêm toán tử (+, -, *, /)
-        appendOperator(nextOperator) {
-          const inputValue = parseFloat(this.displayValue);
+        // 7. EDIT: Sửa nội dung
+        editTodo(id) {
+          const todo = this.todos.find((t) => t.id === id);
+          if (!todo) return;
 
-          // Nếu chưa có số thứ nhất, lưu số hiện tại vào firstOperand
-          if (this.firstOperand === null) {
-            this.firstOperand = inputValue;
+          const newText = prompt("Sửa nội dung công việc:", todo.text);
+          if (newText !== null && newText.trim() !== "") {
+            todo.text = newText.trim();
+            this.saveTodos();
+            this.render();
           }
-          // Nếu đã có toán tử và số thứ nhất, tính luôn kết quả trước
-          // VD: 5 + 3 * 2 → Tính 5+3=8 trước, rồi mới nhân 2
-          else if (this.operator) {
-            const result = this.calculate(false); // false = không lưu history
-            this.displayValue = String(result);
-            this.updateDisplay();
-            this.firstOperand = result;
-          }
+        }
 
-          this.waitingForSecondOperand = true; // Đánh dấu đang chờ số thứ 2
-          this.operator = nextOperator; // Lưu toán tử
-        },
+        // 8. SET FILTER: Xử lý bộ lọc
+        setFilter(filter) {
+          this.currentFilter = filter;
+          // Đổi màu nút đang được chọn
+          document.querySelectorAll(".filter-btn").forEach((btn) => {
+            btn.classList.toggle("active", btn.dataset.filter === filter);
+          });
+          this.render(); // Vẽ lại theo bộ lọc mới
+        }
 
-        // METHOD: Tính toán kết quả
-        calculate(addToHistory = true) {
-          // Nếu chưa có toán tử hoặc đang chờ số thứ 2, return giá trị hiện tại
-          if (this.operator === null || this.waitingForSecondOperand) {
-            return parseFloat(this.displayValue);
-          }
-
-          const secondOperand = parseFloat(this.displayValue);
-          let result = 0;
-
-          // Switch case để xử lý từng phép tính
-          switch (this.operator) {
-            case "+":
-              result = this.firstOperand + secondOperand;
-              break;
-            case "-":
-              result = this.firstOperand - secondOperand;
-              break;
-            case "*":
-              result = this.firstOperand * secondOperand;
-              break;
-            case "/":
-              result = this.firstOperand / secondOperand;
-              break;
+        // 9. FILTER DATA: Lọc dữ liệu trước khi vẽ
+        getFilteredTodos() {
+          switch (this.currentFilter) {
+            case "active":
+              return this.todos.filter((todo) => !todo.completed);
+            case "completed":
+              return this.todos.filter((todo) => todo.completed);
             default:
-              return; // Không làm gì nếu toán tử không hợp lệ
+              return this.todos;
           }
+        }
 
-          // Làm tròn đến 6 chữ số thập phân để tránh lỗi floating point
-          // VD: 0.1 + 0.2 = 0.30000000000000004 → làm tròn thành 0.3
-          result = Math.round(result * 1000000) / 1000000;
+        // 10. RENDER: Vẽ giao diện ra HTML (QUAN TRỌNG NHẤT)
+        render() {
+          const todoList = document.getElementById("todoList");
+          const filteredTodos = this.getFilteredTodos();
 
-          // Nếu addToHistory = true, thêm vào lịch sử
-          if (addToHistory) {
-            const expression = `${this.firstOperand} ${this.operator} ${secondOperand}`;
-            this.addToHistory(expression, result);
-          }
-
-          this.displayValue = String(result);
-          this.updateDisplay();
-
-          // Reset state để chuẩn bị cho phép tính tiếp theo
-          this.firstOperand = result; // Kết quả trở thành số thứ nhất
-          this.waitingForSecondOperand = true;
-          this.operator = null;
-
-          return result;
-        },
-
-        // METHOD: Xóa entry hiện tại (CE - Clear Entry)
-        clearEntry() {
-          this.displayValue = "0";
-          this.updateDisplay();
-        },
-
-        // METHOD: Xóa tất cả (AC - All Clear)
-        clearAll() {
-          this.displayValue = "0";
-          this.firstOperand = null;
-          this.waitingForSecondOperand = false;
-          this.operator = null;
-          this.updateDisplay();
-        },
-
-        // METHOD: Xóa ký tự cuối (Backspace)
-        backspace() {
-          if (this.displayValue.length > 1) {
-            // Cắt bỏ ký tự cuối cùng
-            this.displayValue = this.displayValue.slice(0, -1);
+          if (filteredTodos.length === 0) {
+            // Nếu không có việc gì để hiện
+            todoList.innerHTML = `
+                        <div class="empty-state">
+                            <p>${this.todos.length === 0 ? "Chưa có công việc nào! 😊" : "Không có việc phù hợp bộ lọc"}</p>
+                        </div>
+                    `;
           } else {
-            // Nếu chỉ còn 1 ký tự, reset về "0"
-            this.displayValue = "0";
+            // Biến mảng dữ liệu thành HTML
+            todoList.innerHTML = filteredTodos
+              .map(
+                (todo) => `
+                        <li class="todo-item ${todo.completed ? "completed" : ""}">
+                            <input 
+                                type="checkbox" 
+                                class="todo-checkbox" 
+                                ${todo.completed ? "checked" : ""}
+                                onchange="todoApp.toggleCompleted(${todo.id})"
+                            >
+                            <span class="todo-text">${this.escapeHtml(todo.text)}</span>
+                            <div class="todo-actions">
+                                <button class="todo-btn edit-btn" onclick="todoApp.editTodo(${todo.id})">✏️</button>
+                                <button class="todo-btn delete-btn" onclick="todoApp.deleteTodo(${todo.id})">🗑️</button>
+                            </div>
+                        </li>
+                    `,
+              )
+              .join("");
           }
-          this.updateDisplay();
-        },
 
-        // METHOD: Thêm vào lịch sử
-        addToHistory(expression, result) {
-          // unshift() = thêm vào ĐẦU mảng (item mới nhất lên đầu)
-          this.history.unshift({ expression, result });
+          this.updateStats(); // Cập nhật số liệu
+        }
 
-          // Giới hạn history chỉ 20 items
-          if (this.history.length > 20) {
-            this.history.pop(); // Xóa item cuối cùng (cũ nhất)
+        // 11. STATS: Tính toán số lượng
+        updateStats() {
+          const total = this.todos.length;
+          const completed = this.todos.filter((t) => t.completed).length;
+          const active = total - completed;
+
+          document.getElementById("totalCount").textContent = `Tổng: ${total}`;
+          document.getElementById("completedCount").textContent =
+            `Đã xong: ${completed}`;
+          document.getElementById("activeCount").textContent =
+            `Đang làm: ${active}`;
+        }
+
+        // 12. STORAGE: Lưu vào trình duyệt (localStorage)
+        saveTodos() {
+          localStorage.setItem("todos", JSON.stringify(this.todos));
+        }
+
+        loadTodos() {
+          const saved = localStorage.getItem("todos");
+          if (saved) {
+            this.todos = JSON.parse(saved);
           }
+        }
 
-          this.renderHistory(); // Render lại UI
-        },
+        // Bảo mật: Ngăn chặn mã độc HTML
+        escapeHtml(text) {
+          const div = document.createElement("div");
+          div.textContent = text;
+          return div.innerHTML;
+        }
+      }
 
-        // METHOD: Hiển thị lịch sử ra HTML
-        renderHistory() {
-          const historyList = document.getElementById("historyList");
-
-          // map() = duyệt qua mảng history, tạo HTML cho từng item
-          // join("") = nối các chuỗi HTML lại thành 1 chuỗi duy nhất
-          historyList.innerHTML = this.history
-            .map(
-              (item) => `
-                    <li class="history-item">
-                        <div class="expression">${item.expression}</div>
-                        <div class="result">= ${item.result}</div>
-                    </li>
-                `,
-            )
-            .join("");
-        },
-
-        // METHOD: M+ (Memory Store) - Lưu vào bộ nhớ
-        memoryStore() {
-          this.memory = parseFloat(this.displayValue);
-          this.updateMemoryDisplay();
-        },
-
-        // METHOD: MR (Memory Recall) - Lấy từ bộ nhớ
-        memoryRecall() {
-          this.displayValue = String(this.memory);
-          this.updateDisplay();
-        },
-
-        // METHOD: MC (Memory Clear) - Xóa bộ nhớ
-        memoryClear() {
-          this.memory = 0;
-          this.updateMemoryDisplay();
-        },
-
-        // METHOD: Cập nhật hiển thị memory
-        updateMemoryDisplay() {
-          const memoryDisplay = document.querySelector(".memory-display");
-
-          // Chỉ hiển thị khi memory khác 0
-          memoryDisplay.style.display = this.memory !== 0 ? "block" : "none";
-          memoryDisplay.textContent = `M: ${this.memory}`;
-        },
-      };
-
-      // KHỞI TẠO: Hiển thị "0" khi trang vừa load
-      calculator.updateDisplay();
+      // Khởi động ứng dụng
+      const todoApp = new TodoApp();
     </script>
   </body>
 </html>
