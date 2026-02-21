@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>📝 Todo List App v2.0 - Loops Practice</title>
     <style>
+      /* ========== RESET & BIẾN MÀU SẮC ========== */
+      /* Dấu * là chọn tất cả các phần tử, reset margin và padding về 0, box-sizing cho dễ tính kích thước */
       *,
       *::before,
       *::after {
@@ -13,62 +15,75 @@
         box-sizing: border-box;
       }
 
+      /* Định nghĩa các biến màu sắc cho chế độ sáng (light mode) */
       :root {
-        --bg-primary: white;
-        --bg-secondary: #f8f9fa;
-        --text-primary: #333;
-        --text-secondary: #666;
-        --border-color: #ddd;
-        --accent-primary: #667eea;
-        --accent-hover: #764ba2;
-        --success: #4caf50;
-        --danger: #f44336;
-        --warning: #ff9800;
-        --shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        --transition: all 0.3s;
+        --bg-primary: white; /* Màu nền chính */
+        --bg-secondary: #f8f9fa; /* Màu nền phụ (cho các khung) */
+        --text-primary: #333; /* Màu chữ chính */
+        --text-secondary: #666; /* Màu chữ phụ */
+        --border-color: #ddd; /* Màu viền */
+        --accent-primary: #667eea; /* Màu nhấn chính (tím xanh) */
+        --accent-hover: #764ba2; /* Màu nhấn khi hover (tím đậm) */
+        --success: #4caf50; /* Màu xanh lá cho hoàn thành */
+        --danger: #f44336; /* Màu đỏ cho xóa */
+        --warning: #ff9800; /* Màu cam cho xuất dữ liệu */
+        --shadow: 0 20px 60px rgba(0, 0, 0, 0.3); /* Đổ bóng */
+        --transition: all 0.3s; /* Hiệu ứng chuyển động 0.3 giây */
       }
 
+      /* Chế độ tối (dark mode) - ghi đè lại các biến màu */
       .dark-mode {
-        --bg-primary: #1a1a1a;
-        --bg-secondary: #2d2d2d;
-        --text-primary: #f8f9fa;
-        --text-secondary: #aaa;
-        --border-color: #444;
-        --accent-primary: #764ba2;
+        --bg-primary: #1a1a1a; /* Nền tối */
+        --bg-secondary: #2d2d2d; /* Nền phụ tối */
+        --text-primary: #f8f9fa; /* Chữ sáng */
+        --text-secondary: #aaa; /* Chữ phụ sáng mờ */
+        --border-color: #444; /* Viền tối */
+        --accent-primary: #764ba2; /* Đổi màu nhấn cho phù hợp */
         --accent-hover: #667eea;
       }
 
       body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        color: var(--text-primary);
-        transition: var(--transition);
+        font-family:
+          "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; /* Font chữ dễ đọc */
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 100%
+        ); /* Nền gradient chuyển màu */
+        min-height: 100vh; /* Chiều cao tối thiểu bằng toàn màn hình */
+        display: flex; /* Sử dụng flexbox để căn giữa */
+        justify-content: center; /* Căn giữa theo chiều ngang */
+        align-items: center; /* Căn giữa theo chiều dọc */
+        padding: 20px; /* Khoảng cách lề 20px */
+        color: var(--text-primary); /* Màu chữ lấy từ biến */
+        transition: var(--transition); /* Hiệu ứng chuyển màu khi đổi theme */
       }
 
       .dark-mode body {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        background: linear-gradient(
+          135deg,
+          #1a1a1a 0%,
+          #2d2d2d 100%
+        ); /* Nền gradient tối */
       }
 
+      /* Khung chứa toàn bộ nội dung */
       .container {
         width: 100%;
-        max-width: 700px;
-        background: var(--bg-primary);
-        border-radius: 15px;
-        box-shadow: var(--shadow);
-        padding: 40px;
-        transition: var(--transition);
+        max-width: 700px; /* Chiều rộng tối đa 700px */
+        background: var(--bg-primary); /* Nền trắng hoặc tối tùy theme */
+        border-radius: 15px; /* Bo góc 15px */
+        box-shadow: var(--shadow); /* Đổ bóng */
+        padding: 40px; /* Khoảng cách bên trong 40px */
+        transition: var(--transition); /* Hiệu ứng khi đổi theme */
       }
 
+      /* Phần header chứa tiêu đề và nút chuyển theme */
       .header {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
+        justify-content: space-between; /* Căn hai phần tử về hai đầu */
+        align-items: center; /* Căn giữa theo chiều dọc */
+        margin-bottom: 30px; /* Khoảng cách phía dưới 30px */
       }
 
       h1 {
@@ -80,10 +95,10 @@
       .theme-toggle {
         background: var(--accent-primary);
         color: white;
-        border: none;
-        border-radius: 20px;
+        border: none; /* Không viền */
+        border-radius: 20px; /* Bo tròn */
         padding: 8px 16px;
-        cursor: pointer;
+        cursor: pointer; /* Con trỏ chuột dạng bàn tay */
         font-size: 14px;
         transition: var(--transition);
       }
@@ -92,14 +107,15 @@
         background: var(--accent-hover);
       }
 
+      /* Khu vực nhập và thêm công việc */
       .input-group {
         display: flex;
-        gap: 10px;
+        gap: 10px; /* Khoảng cách giữa các phần tử con */
         margin-bottom: 20px;
       }
 
       #todoInput {
-        flex: 1;
+        flex: 1; /* Chiếm toàn bộ không gian còn lại */
         padding: 15px 20px;
         border: 2px solid var(--border-color);
         border-radius: 8px;
@@ -110,8 +126,8 @@
       }
 
       #todoInput:focus {
-        outline: none;
-        border-color: var(--accent-primary);
+        outline: none; /* Bỏ viền mặc định khi focus */
+        border-color: var(--accent-primary); /* Đổi màu viền khi focus */
       }
 
       #addButton {
@@ -124,22 +140,23 @@
         font-weight: 600;
         cursor: pointer;
         transition: var(--transition);
-        white-space: nowrap;
+        white-space: nowrap; /* Không xuống dòng */
       }
 
       #addButton:hover {
         background: var(--accent-hover);
-        transform: translateY(-2px);
+        transform: translateY(-2px); /* Nhấc nút lên 2px khi hover */
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
       }
 
       #addButton:active {
-        transform: translateY(0);
+        transform: translateY(0); /* Trở lại vị trí cũ khi click */
       }
 
+      /* Thanh điều khiển (bộ lọc, tìm kiếm) */
       .controls {
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: wrap; /* Cho phép xuống dòng nếu không đủ chỗ */
         gap: 10px;
         margin-bottom: 20px;
         justify-content: space-between;
@@ -151,11 +168,11 @@
       }
 
       .search-box {
-        position: relative;
+        position: relative; /* Để đặt icon tìm kiếm bên trong */
       }
 
       #searchInput {
-        padding: 10px 15px 10px 35px;
+        padding: 10px 15px 10px 35px; /* Chừa chỗ bên trái cho icon */
         border: 2px solid var(--border-color);
         border-radius: 20px;
         background: var(--bg-secondary);
@@ -168,17 +185,18 @@
       #searchInput:focus {
         outline: none;
         border-color: var(--accent-primary);
-        width: 250px;
+        width: 250px; /* Mở rộng khi focus */
       }
 
       .search-icon {
         position: absolute;
         left: 12px;
         top: 50%;
-        transform: translateY(-50%);
+        transform: translateY(-50%); /* Căn giữa theo chiều dọc */
         color: var(--text-secondary);
       }
 
+      /* Các nút chung (filter, sort, action) */
       .filter-btn,
       .sort-btn,
       .action-btn {
@@ -201,6 +219,7 @@
         border-color: var(--accent-primary);
       }
 
+      /* Nút đang được chọn (active) */
       .filter-btn.active,
       .sort-btn.active {
         background: var(--accent-primary);
@@ -213,12 +232,14 @@
         gap: 8px;
       }
 
+      /* Danh sách công việc */
       .todo-list {
-        list-style: none;
+        list-style: none; /* Bỏ dấu đầu dòng mặc định của thẻ ul */
         margin-top: 20px;
-        min-height: 300px;
+        min-height: 300px; /* Chiều cao tối thiểu để tránh bị co lại */
       }
 
+      /* Mỗi công việc */
       .todo-item {
         display: flex;
         align-items: center;
@@ -227,31 +248,37 @@
         background: var(--bg-secondary);
         border-radius: 8px;
         transition: var(--transition);
-        border-left: 4px solid var(--accent-primary);
-        cursor: grab;
+        border-left: 4px solid var(--accent-primary); /* Viền trái màu tím */
+        cursor: grab; /* Con trỏ kiểu kéo thả */
       }
 
       .todo-item:active {
-        cursor: grabbing;
+        cursor: grabbing; /* Khi đang kéo */
       }
 
       .todo-item.dragging {
-        opacity: 0.5;
-        transform: scale(0.98);
+        opacity: 0.5; /* Mờ đi khi kéo */
+        transform: scale(0.98); /* Thu nhỏ một chút */
       }
 
       .todo-item:hover {
-        transform: translateX(5px);
+        transform: translateX(5px); /* Trượt sang phải 5px khi hover */
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
 
+      /* Công việc đã hoàn thành */
       .todo-item.completed {
-        background: #e8f5e9;
+        background: #e8f5e9; /* Màu xanh nhạt */
         border-left-color: var(--success);
       }
 
       .dark-mode .todo-item.completed {
-        background: rgba(76, 175, 80, 0.1);
+        background: rgba(
+          76,
+          175,
+          80,
+          0.1
+        ); /* Trong chế độ tối, dùng nền trong suốt xanh */
       }
 
       .todo-checkbox {
@@ -259,7 +286,7 @@
         width: 20px;
         height: 20px;
         cursor: pointer;
-        accent-color: var(--success);
+        accent-color: var(--success); /* Màu checkbox khi được chọn */
       }
 
       .todo-text {
@@ -271,7 +298,7 @@
 
       .todo-item.completed .todo-text {
         color: var(--text-secondary);
-        text-decoration: line-through;
+        text-decoration: line-through; /* Gạch ngang chữ */
       }
 
       .todo-actions {
@@ -290,7 +317,7 @@
       }
 
       .edit-btn {
-        background: #2196f3;
+        background: #2196f3; /* Xanh dương */
         color: white;
       }
 
@@ -307,6 +334,7 @@
         background: #e53935;
       }
 
+      /* Thống kê */
       .stats {
         display: flex;
         justify-content: space-between;
@@ -318,6 +346,7 @@
         color: var(--text-secondary);
       }
 
+      /* Trạng thái khi không có công việc nào */
       .empty-state {
         text-align: center;
         padding: 60px 20px;
@@ -331,6 +360,7 @@
         color: var(--border-color);
       }
 
+      /* Nút xuất và nhập dữ liệu */
       .export-import {
         display: flex;
         gap: 10px;
@@ -339,7 +369,7 @@
 
       .export-btn,
       .import-btn {
-        flex: 1;
+        flex: 1; /* Cả hai nút chiếm đều chiều rộng */
         padding: 10px;
         border: none;
         border-radius: 5px;
@@ -359,7 +389,7 @@
       }
 
       .import-btn {
-        background: #9c27b0;
+        background: #9c27b0; /* Màu tím */
         color: white;
       }
 
@@ -367,13 +397,14 @@
         background: #7b1fa2;
       }
 
+      /* Responsive: điều chỉnh cho màn hình nhỏ (điện thoại) */
       @media (max-width: 768px) {
         .container {
           padding: 20px;
         }
 
         .input-group {
-          flex-direction: column;
+          flex-direction: column; /* Xếp dọc thay vì ngang */
         }
 
         #addButton {
@@ -438,7 +469,7 @@
       </div>
 
       <ul id="todoList" class="todo-list">
-        <!-- Todo items sẽ được thêm vào đây -->
+        <!-- Các công việc sẽ được JavaScript chèn vào đây -->
       </ul>
 
       <div class="stats">
@@ -454,119 +485,153 @@
     </div>
 
     <script>
-      // Todo App v2.0 - Enhanced with Loops and more features
+      // Todo App v2.0 - Nâng cao với vòng lặp và nhiều tính năng hơn
+      // Đây là một "lớp" (class) trong JavaScript, giúp tổ chức code gọn gàng.
       class TodoApp {
+        // Hàm khởi tạo (constructor) sẽ tự động chạy khi tạo đối tượng mới từ class này
         constructor() {
-          this.todos = [];
-          this.currentFilter = "all";
-          this.currentSort = "newest";
-          this.searchQuery = "";
-          this.isDarkMode = false;
-          this.init();
+          // Khởi tạo các thuộc tính (biến) của ứng dụng
+          this.todos = []; // Mảng chứa danh sách các công việc (ban đầu rỗng)
+          this.currentFilter = "all"; // Bộ lọc hiện tại: 'all', 'active', 'completed'
+          this.currentSort = "newest"; // Cách sắp xếp hiện tại: 'newest', 'oldest', 'az', 'za'
+          this.searchQuery = ""; // Từ khóa tìm kiếm (chuỗi rỗng là không tìm)
+          this.isDarkMode = false; // Trạng thái chế độ tối (false = sáng)
+          this.init(); // Gọi hàm init() để bắt đầu
         }
 
+        // Hàm init() dùng để khởi động ứng dụng: lấy dữ liệu đã lưu, vẽ giao diện, gắn sự kiện
         init() {
-          this.loadFromLocalStorage();
-          this.render();
-          this.setupEventListeners();
+          this.loadFromLocalStorage(); // Đọc dữ liệu từ localStorage (trình duyệt) nếu có
+          this.render(); // Vẽ danh sách công việc lên màn hình
+          this.setupEventListeners(); // Gắn các sự kiện cho các nút bấm
         }
 
+        // Hàm gắn sự kiện cho các phần tử trên giao diện (nút thêm, lọc, sắp xếp, ...)
         setupEventListeners() {
-          // Add todo
+          // ---- Nút thêm công việc ----
           document
             .getElementById("addButton")
             .addEventListener("click", () => this.addTodo());
+          // Ô nhập liệu: nếu nhấn phím Enter thì cũng thêm công việc
           document
             .getElementById("todoInput")
             .addEventListener("keypress", (e) => {
               if (e.key === "Enter") this.addTodo();
             });
 
-          // Filter buttons
+          // ---- Các nút lọc (All, Active, Completed) ----
+          // Lấy tất cả các phần tử có class 'filter-btn' và gán sự kiện click cho từng cái
           document.querySelectorAll(".filter-btn").forEach((btn) => {
             btn.addEventListener("click", (e) => {
+              // e.target là nút vừa được click, lấy thuộc tính data-filter của nó
               this.setFilter(e.target.dataset.filter);
             });
           });
 
-          // Sort buttons
+          // ---- Các nút sắp xếp (Newest, Oldest, A-Z, Z-A) ----
           document.querySelectorAll(".sort-btn").forEach((btn) => {
             btn.addEventListener("click", (e) => {
               this.setSort(e.target.dataset.sort);
             });
           });
 
-          // Search input
+          // ---- Ô tìm kiếm ----
           document
             .getElementById("searchInput")
             .addEventListener("input", (e) => {
+              // Lấy giá trị nhập vào, chuyển thành chữ thường để dễ so sánh
               this.searchQuery = e.target.value.toLowerCase();
-              this.render();
+              this.render(); // Vẽ lại danh sách sau khi cập nhật từ khóa
             });
 
-          // Clear completed
+          // ---- Nút xóa các công việc đã hoàn thành ----
           document
             .getElementById("clearCompleted")
             .addEventListener("click", () => {
               this.clearCompleted();
             });
 
-          // Theme toggle
+          // ---- Nút chuyển đổi theme (sáng/tối) ----
           document
             .getElementById("themeToggle")
             .addEventListener("click", () => {
               this.toggleTheme();
             });
 
-          // Export/Import
+          // ---- Nút xuất dữ liệu (Export) ----
           document.getElementById("exportBtn").addEventListener("click", () => {
             this.exportTodos();
           });
 
+          // ---- Nút nhập dữ liệu (Import) ----
           document.getElementById("importBtn").addEventListener("click", () => {
             this.importTodos();
           });
         }
 
+        // ---------- CÁC HÀM XỬ LÝ CÔNG VIỆC (CRUD) ----------
+
+        /**
+         * Thêm một công việc mới.
+         * Lấy nội dung từ ô input, tạo đối tượng công việc, thêm vào mảng todos,
+         * lưu lại và vẽ lại giao diện.
+         */
         addTodo() {
           const input = document.getElementById("todoInput");
-          const text = input.value.trim();
+          const text = input.value.trim(); // Loại bỏ khoảng trắng đầu cuối
 
-          if (text === "") return;
+          if (text === "") return; // Nếu rỗng thì không làm gì
 
+          // Tạo một đối tượng công việc
           const newTodo = {
-            id: Date.now(),
-            text: text,
-            completed: false,
-            createdAt: new Date().toISOString(),
+            id: Date.now(), // ID duy nhất dựa trên thời gian hiện tại (số mili giây)
+            text: text, // Nội dung công việc
+            completed: false, // Mặc định chưa hoàn thành
+            createdAt: new Date().toISOString(), // Thời gian tạo (chuẩn ISO)
           };
 
-          this.todos.push(newTodo);
-          this.saveToLocalStorage();
-          input.value = "";
-          this.render();
+          this.todos.push(newTodo); // Thêm vào cuối mảng
+          this.saveToLocalStorage(); // Lưu vào localStorage
+          input.value = ""; // Xóa ô input
+          this.render(); // Vẽ lại danh sách
         }
 
+        /**
+         * Xóa một công việc theo id.
+         * @param {number} id - ID của công việc cần xóa
+         */
         deleteTodo(id) {
+          // Lọc mảng: giữ lại các công việc có id khác với id cần xóa
           this.todos = this.todos.filter((todo) => todo.id !== id);
           this.saveToLocalStorage();
           this.render();
         }
 
+        /**
+         * Đánh dấu hoàn thành / chưa hoàn thành cho công việc.
+         * @param {number} id - ID của công việc
+         */
         toggleCompleted(id) {
+          // Tìm công việc có id tương ứng
           const todo = this.todos.find((t) => t.id === id);
           if (todo) {
-            todo.completed = !todo.completed;
+            todo.completed = !todo.completed; // Đảo ngược trạng thái
             this.saveToLocalStorage();
             this.render();
           }
         }
 
+        /**
+         * Sửa nội dung công việc (dùng hộp thoại prompt).
+         * @param {number} id - ID của công việc cần sửa
+         */
         editTodo(id) {
           const todo = this.todos.find((t) => t.id === id);
           if (!todo) return;
 
+          // Hiển thị hộp thoại với nội dung hiện tại
           const newText = prompt("Edit todo:", todo.text);
+          // Nếu người dùng không nhấn Cancel và nhập nội dung không rỗng
           if (newText !== null && newText.trim() !== "") {
             todo.text = newText.trim();
             this.saveToLocalStorage();
@@ -574,14 +639,26 @@
           }
         }
 
+        // ---------- CÁC HÀM XỬ LÝ LỌC, SẮP XẾP, TÌM KIẾM ----------
+
+        /**
+         * Thiết lập bộ lọc hiện tại và cập nhật class 'active' cho các nút.
+         * @param {string} filter - Giá trị filter: 'all', 'active', 'completed'
+         */
         setFilter(filter) {
           this.currentFilter = filter;
+          // Cập nhật class 'active' cho các nút filter
           document.querySelectorAll(".filter-btn").forEach((btn) => {
+            // Nếu data-filter của nút trùng với filter hiện tại thì thêm class active, ngược lại bỏ
             btn.classList.toggle("active", btn.dataset.filter === filter);
           });
-          this.render();
+          this.render(); // Vẽ lại danh sách
         }
 
+        /**
+         * Thiết lập kiểu sắp xếp hiện tại và cập nhật class 'active' cho các nút.
+         * @param {string} sort - Kiểu sắp xếp: 'newest', 'oldest', 'az', 'za'
+         */
         setSort(sort) {
           this.currentSort = sort;
           document.querySelectorAll(".sort-btn").forEach((btn) => {
@@ -590,42 +667,54 @@
           this.render();
         }
 
+        /**
+         * Lấy danh sách công việc sau khi đã áp dụng bộ lọc và sắp xếp.
+         * @returns {Array} Mảng các công việc đã được lọc và sắp xếp
+         */
         getFilteredAndSortedTodos() {
-          // Filter by current filter
-          let filtered = this.todos;
+          // ---- BƯỚC 1: Lọc theo trạng thái (all, active, completed) ----
+          let filtered = this.todos; // Bắt đầu từ tất cả công việc
 
           switch (this.currentFilter) {
             case "active":
+              // Lọc những công việc có completed = false
               filtered = this.todos.filter((todo) => !todo.completed);
               break;
             case "completed":
+              // Lọc những công việc có completed = true
               filtered = this.todos.filter((todo) => todo.completed);
               break;
+            // 'all' không cần lọc, giữ nguyên
           }
 
-          // Filter by search query
+          // ---- BƯỚC 2: Lọc theo từ khóa tìm kiếm (nếu có) ----
           if (this.searchQuery) {
+            // Chỉ giữ lại các công việc có text chứa từ khóa (không phân biệt hoa/thường)
             filtered = filtered.filter((todo) =>
               todo.text.toLowerCase().includes(this.searchQuery),
             );
           }
 
-          // Sort
+          // ---- BƯỚC 3: Sắp xếp theo tiêu chí ----
           switch (this.currentSort) {
             case "newest":
+              // Sắp xếp theo thời gian tạo giảm dần (mới nhất lên đầu)
               filtered.sort(
                 (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
               );
               break;
             case "oldest":
+              // Sắp xếp theo thời gian tạo tăng dần (cũ nhất lên đầu)
               filtered.sort(
                 (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
               );
               break;
             case "az":
+              // Sắp xếp theo bảng chữ cái A-Z (dùng localeCompare để so sánh chuỗi)
               filtered.sort((a, b) => a.text.localeCompare(b.text));
               break;
             case "za":
+              // Sắp xếp Z-A (đảo ngược của A-Z)
               filtered.sort((a, b) => b.text.localeCompare(a.text));
               break;
           }
@@ -633,9 +722,15 @@
           return filtered;
         }
 
+        /**
+         * Xóa tất cả công việc đã hoàn thành (sau khi xác nhận).
+         */
         clearCompleted() {
+          // Kiểm tra xem có ít nhất một công việc đã hoàn thành không
           if (this.todos.some((todo) => todo.completed)) {
+            // some() trả về true nếu có ít nhất một phần tử thỏa mãn
             if (confirm("Delete all completed todos?")) {
+              // Lọc giữ lại những công việc chưa hoàn thành
               this.todos = this.todos.filter((todo) => !todo.completed);
               this.saveToLocalStorage();
               this.render();
@@ -645,41 +740,66 @@
           }
         }
 
+        // ---------- CÁC HÀM CHỨC NĂNG PHỤ (THEME, XUẤT/NHẬP) ----------
+
+        /**
+         * Chuyển đổi giữa chế độ sáng và tối.
+         */
         toggleTheme() {
-          this.isDarkMode = !this.isDarkMode;
+          this.isDarkMode = !this.isDarkMode; // Đảo ngược trạng thái
+          // Thêm hoặc xóa class 'dark-mode' trên thẻ body
           document.body.classList.toggle("dark-mode", this.isDarkMode);
+          // Cập nhật nội dung nút theme
           document.getElementById("themeToggle").textContent = this.isDarkMode
             ? "☀️ Light Mode"
             : "🌙 Dark Mode";
-          this.saveToLocalStorage();
+          this.saveToLocalStorage(); // Lưu lại lựa chọn theme
         }
 
+        /**
+         * Xuất danh sách công việc ra file JSON.
+         * Tạo một file chứa dữ liệu todos dưới dạng JSON và tải xuống.
+         */
         exportTodos() {
+          // JSON.stringify chuyển mảng todos thành chuỗi JSON, tham số null, 2 để format đẹp
           const data = JSON.stringify(this.todos, null, 2);
+          // Tạo một đối tượng Blob (tập tin nhị phân) từ chuỗi JSON
           const blob = new Blob([data], { type: "application/json" });
+          // Tạo một URL tạm thời cho blob
           const url = URL.createObjectURL(blob);
+          // Tạo thẻ a ẩn để kích hoạt tải xuống
           const a = document.createElement("a");
           a.href = url;
-          a.download = `todos-${new Date().toISOString().slice(0, 10)}.json`;
-          a.click();
+          a.download = `todos-${new Date().toISOString().slice(0, 10)}.json`; // Tên file theo ngày
+          a.click(); // Giả lập click để tải
+          // Giải phóng URL tạm thời
           URL.revokeObjectURL(url);
         }
 
+        /**
+         * Nhập danh sách công việc từ file JSON (thay thế dữ liệu hiện tại).
+         * Mở hộp thoại chọn file, đọc nội dung và cập nhật todos.
+         */
         importTodos() {
+          // Tạo một thẻ input file ẩn
           const input = document.createElement("input");
           input.type = "file";
-          input.accept = ".json";
+          input.accept = ".json"; // Chỉ chấp nhận file .json
 
+          // Khi người dùng chọn file
           input.onchange = (e) => {
-            const file = e.target.files[0];
+            const file = e.target.files[0]; // Lấy file đầu tiên
             if (!file) return;
 
+            // Tạo đối tượng FileReader để đọc file
             const reader = new FileReader();
             reader.onload = (event) => {
               try {
+                // Parse nội dung file thành mảng các todo
                 const importedTodos = JSON.parse(event.target.result);
 
-                // Validate imported data
+                // Kiểm tra dữ liệu có đúng định dạng không
+                // Mỗi todo phải có id, text và completed
                 const isValid = importedTodos.every(
                   (todo) =>
                     todo.id && todo.text && todo.completed !== undefined,
@@ -687,7 +807,7 @@
 
                 if (isValid) {
                   if (confirm("Replace current todos with imported data?")) {
-                    this.todos = importedTodos;
+                    this.todos = importedTodos; // Gán mảng mới
                     this.saveToLocalStorage();
                     this.render();
                     alert("Import successful!");
@@ -699,16 +819,23 @@
                 alert("Error importing file!");
               }
             };
-            reader.readAsText(file);
+            reader.readAsText(file); // Đọc file dưới dạng văn bản
           };
 
-          input.click();
+          input.click(); // Mở hộp thoại chọn file
         }
 
+        // ---------- HÀM VẼ GIAO DIỆN (RENDER) ----------
+
+        /**
+         * Vẽ lại danh sách công việc lên HTML dựa trên dữ liệu hiện tại.
+         */
         render() {
           const todoList = document.getElementById("todoList");
+          // Lấy danh sách đã lọc và sắp xếp
           const filteredTodos = this.getFilteredAndSortedTodos();
 
+          // Nếu không có công việc nào sau khi lọc, hiển thị "empty state"
           if (filteredTodos.length === 0) {
             const hasSearch = this.searchQuery.length > 0;
             const hasTodos = this.todos.length > 0;
@@ -722,6 +849,7 @@
                         </div>
                     `;
           } else {
+            // Dùng map để tạo chuỗi HTML cho từng todo, sau đó nối lại bằng join('')
             todoList.innerHTML = filteredTodos
               .map(
                 (todo) => `
@@ -742,56 +870,73 @@
               )
               .join("");
 
-            // Setup drag and drop
+            // Sau khi vẽ xong, thiết lập tính năng kéo thả
             this.setupDragAndDrop();
           }
 
+          // Cập nhật số liệu thống kê
           this.updateStats();
         }
 
+        /**
+         * Thiết lập sự kiện kéo thả cho các công việc (drag and drop).
+         * Cho phép người dùng sắp xếp lại thứ tự công việc bằng cách kéo thả.
+         */
         setupDragAndDrop() {
           const todoItems = document.querySelectorAll(".todo-item");
-          let draggedItem = null;
+          let draggedItem = null; // Lưu phần tử đang được kéo
 
           todoItems.forEach((item) => {
-            // Drag start
+            // Khi bắt đầu kéo
             item.addEventListener("dragstart", () => {
               draggedItem = item;
+              // Thêm class 'dragging' sau một khoảng thời gian rất ngắn (để hiệu ứng mượt)
               setTimeout(() => item.classList.add("dragging"), 0);
             });
 
-            // Drag end
+            // Khi kết thúc kéo
             item.addEventListener("dragend", () => {
               draggedItem = null;
               item.classList.remove("dragging");
             });
 
-            // Drag over
+            // Khi kéo qua một phần tử khác (sự kiện dragover cần ngăn chặn mặc định)
             item.addEventListener("dragover", (e) => {
-              e.preventDefault();
+              e.preventDefault(); // Bắt buộc để cho phép drop
+              // Tìm vị trí để chèn draggedItem
               const afterElement = this.getDragAfterElement(
                 todoList,
                 e.clientY,
               );
               if (afterElement == null) {
+                // Nếu không tìm thấy phần tử sau, chèn vào cuối danh sách
                 todoList.appendChild(draggedItem);
               } else {
+                // Chèn trước phần tử afterElement
                 todoList.insertBefore(draggedItem, afterElement);
               }
             });
           });
         }
 
+        /**
+         * Hàm phụ trợ cho kéo thả: tìm phần tử nằm gần vị trí chuột nhất để chèn vào trước nó.
+         * @param {HTMLElement} container - Danh sách ul
+         * @param {number} y - Tọa độ Y của chuột
+         * @returns {HTMLElement} Phần tử cần chèn trước, hoặc null nếu chèn cuối
+         */
         getDragAfterElement(container, y) {
+          // Lấy tất cả các phần tử có thể thả (không kể phần tử đang kéo)
           const draggableElements = [
             ...container.querySelectorAll(".todo-item:not(.dragging)"),
           ];
 
+          // Dùng reduce để tìm phần tử có khoảng cách gần nhất phía trên chuột
           return draggableElements.reduce(
             (closest, child) => {
-              const box = child.getBoundingClientRect();
-              const offset = y - box.top - box.height / 2;
-
+              const box = child.getBoundingClientRect(); // Lấy vị trí và kích thước của child
+              const offset = y - box.top - box.height / 2; // Khoảng cách từ chuột đến tâm child
+              // Nếu offset âm (chuột ở trên tâm) và offset lớn hơn closest.offset (gần hơn)
               if (offset < 0 && offset > closest.offset) {
                 return { offset: offset, element: child };
               } else {
@@ -799,9 +944,12 @@
               }
             },
             { offset: Number.NEGATIVE_INFINITY },
-          ).element;
+          ).element; // Khởi tạo với offset âm vô cùng
         }
 
+        /**
+         * Cập nhật số liệu thống kê: tổng số, đã hoàn thành, chưa hoàn thành.
+         */
         updateStats() {
           const total = this.todos.length;
           const completed = this.todos.filter((t) => t.completed).length;
@@ -814,39 +962,64 @@
             `Active: ${active}`;
         }
 
+        // ---------- LƯU TRỮ LOCALSTORAGE ----------
+
+        /**
+         * Lưu dữ liệu (todos và trạng thái theme) vào localStorage.
+         * localStorage là nơi lưu trữ vĩnh viễn trên trình duyệt, không bị mất khi tải lại trang.
+         */
         saveToLocalStorage() {
           const data = {
             todos: this.todos,
             isDarkMode: this.isDarkMode,
           };
+          // localStorage chỉ lưu được chuỗi, nên dùng JSON.stringify để chuyển object thành chuỗi
           localStorage.setItem("todos_v2", JSON.stringify(data));
 
-          // Apply theme
+          // Đồng thời áp dụng theme cho body (phòng khi gọi từ nơi khác)
           document.body.classList.toggle("dark-mode", this.isDarkMode);
         }
 
+        /**
+         * Đọc dữ liệu từ localStorage và cập nhật vào ứng dụng.
+         * Nếu chưa có dữ liệu, giữ nguyên mảng rỗng.
+         */
         loadFromLocalStorage() {
           const saved = localStorage.getItem("todos_v2");
           if (saved) {
-            const data = JSON.parse(saved);
-            this.todos = data.todos || [];
+            const data = JSON.parse(saved); // Chuyển chuỗi JSON thành object
+            this.todos = data.todos || []; // Nếu có todos thì gán, không thì mảng rỗng
             this.isDarkMode = data.isDarkMode || false;
 
-            // Apply theme
+            // Áp dụng theme đã lưu
             if (this.isDarkMode) {
               document.body.classList.add("dark-mode");
+              document.getElementById("themeToggle").textContent =
+                "☀️ Light Mode";
+            } else {
+              document.getElementById("themeToggle").textContent =
+                "🌙 Dark Mode";
             }
           }
         }
 
+        /**
+         * Hàm phòng ngừa tấn công XSS (Cross-Site Scripting).
+         * Chuyển các ký tự đặc biệt trong text thành thực thể HTML để không bị hiểu là mã.
+         * @param {string} text - Nội dung cần thoát HTML
+         * @returns {string} Nội dung an toàn để chèn vào HTML
+         */
         escapeHtml(text) {
           const div = document.createElement("div");
-          div.textContent = text;
-          return div.innerHTML;
+          div.textContent = text; // Gán nội dung, trình duyệt tự động escape
+          return div.innerHTML; // Lấy lại nội dung đã được escape
         }
       }
 
-      // Khởi tạo app
+      // --- KẾT THÚC CLASS ---
+
+      // Tạo một đối tượng todoApp từ class TodoApp.
+      // Lúc này constructor sẽ chạy và ứng dụng bắt đầu hoạt động.
       const todoApp = new TodoApp();
     </script>
   </body>
